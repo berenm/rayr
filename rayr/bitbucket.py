@@ -81,7 +81,7 @@ class Bitbucket(OAuth2Service):
         }
 
         language = kwargs.get('language', '').lower()
-        if language not in ['html', 'cmake', 'makefile']:
+        if language not in ['html', 'cmake', 'makefile', 'batchfile']:
             params['language'] = language
 
         self.repos[reponame] = self.post(service_url, json=params).json()
