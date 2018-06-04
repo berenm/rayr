@@ -14,7 +14,7 @@ class Gitlab(OAuth2Service):
     token_url = 'https://gitlab.com/oauth/token'
     api_url = 'https://gitlab.com/api/v4/{service}'
     token_file = '.gitlab-auth'
-    scopes = []
+    scopes = ['api']
 
     def __init__(self):
         super(Gitlab, self).__init__(Gitlab)
