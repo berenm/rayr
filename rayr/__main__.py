@@ -25,7 +25,7 @@ def sync_repo(name, repo, github, gitlab, bitbkt):
 
     group = repo['owner']['login']
     github_repo = name
-    gitlab_repo = name.replace('/.', '/dot-')
+    gitlab_repo = name.replace('/.', '/_.')
     bitbkt_repo = name
 
     description = []
