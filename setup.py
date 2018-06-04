@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='rayr',
-    version='0.0.2',
+    version='0.0.3',
     description='Replicate all your repositories',
     long_description=readme(),
     url='https://gitlab.com/berenm/rayr',
