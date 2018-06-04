@@ -14,7 +14,7 @@ class OAuth2Service(object):
         try:
             with open(self.clazz.token_file, 'rb') as f:
                 self.token = pickle.load(f)
-        except:
+        except Exception:
             self.token = None
 
         self.oauth = OAuth2Session(self.clazz.client,
