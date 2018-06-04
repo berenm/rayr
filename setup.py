@@ -11,9 +11,9 @@ setup(
     version='0.0.2',
     description='Replicate all your repositories',
     long_description=readme(),
-    url='http://github.com/berenm/rayr',
+    url='https://gitlab.com/berenm/rayr',
     author='Beren Minor',
-    author_email='beren.minor+github@example.com',
+    author_email='beren.minor+git@gmail.com',
     license='UNLICENSE',
     packages=['rayr'],
     entry_points={

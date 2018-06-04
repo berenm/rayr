@@ -5,6 +5,8 @@ from .config import config
 
 
 class Gitlab(OAuth2Service):
+    enabled = config['gitlab']['enabled']
+    private = config['gitlab']['private']
     client = config['gitlab']['client']
     secret = config['gitlab']['secret']
     redir_url = 'http://127.0.0.1:8080'
@@ -12,7 +14,7 @@ class Gitlab(OAuth2Service):
     token_url = 'https://gitlab.com/oauth/token'
     api_url = 'https://gitlab.com/api/v4/{service}'
     token_file = '.gitlab-auth'
-    scope = None
+    scopes = ['api']
 
     def __init__(self):
         super(Gitlab, self).__init__(Gitlab)
@@ -21,6 +23,9 @@ class Gitlab(OAuth2Service):
 
     def reponame(self, repo):
         return repo['path_with_namespace']
+
+    def is_private(self, repo):
+        return not repo['visibility'] == 'public'
 
     def groupname(self, group):
         return group['path']
@@ -32,7 +37,7 @@ class Gitlab(OAuth2Service):
         print('listing gitlab repositories...', file=sys.stderr)
         service_url = Gitlab.api_url.format(service='projects')
 
-        params = {'membership': 'true', 'simple': 'true', 'page': 1}
+        params = {'membership': 'true', 'page': 1}
         projects = self.get(service_url, params=params).json()
         next_projects = projects
         while len(next_projects) > 0:
@@ -40,7 +45,8 @@ class Gitlab(OAuth2Service):
             next_projects = self.get(service_url, params=params).json()
             projects += next_projects
 
-        self.repos = dict([(self.reponame(p), p) for p in projects])
+        self.repos = dict([(self.reponame(p), p) for p in projects
+                           if Gitlab.private or not self.is_private(p)])
         return self.repos
 
     def get_groups(self, force=False):
@@ -106,9 +112,18 @@ if __name__ == '__main__':
     gitlab = Gitlab()
 
     print('gitlab groups:')
-    for k, v in sorted(gitlab.get_groups().items()):
-        print(' -', k, v)
+    for k, _ in sorted(gitlab.get_groups().items()):
+        print(' -', k)
 
-    print('gitlab repos:')
-    for k, v in sorted(gitlab.get_repos().items()):
-        print(' -', k, v)
+    repos = gitlab.get_repos()
+    print('gitlab public repos:')
+    for k, v in sorted(repos.items()):
+        if gitlab.is_private(v):
+            continue
+        print(' -', k)
+
+    print('gitlab private repos:')
+    for k, v in sorted(repos.items()):
+        if not gitlab.is_private(v):
+            continue
+        print(' -', k)

@@ -5,6 +5,8 @@ from .config import config
 
 
 class Bitbucket(OAuth2Service):
+    enabled = config['bitbucket']['enabled']
+    private = config['bitbucket']['private']
     client = config['bitbucket']['client']
     secret = config['bitbucket']['secret']
     redir_url = 'http://127.0.0.1:8080'
@@ -12,15 +14,18 @@ class Bitbucket(OAuth2Service):
     token_url = 'https://bitbucket.org/site/oauth2/access_token'
     api_url = 'https://api.bitbucket.org/2.0/{service}'
     token_file = '.bitbucket-auth'
-    scope = None
+    scopes = []
 
     def __init__(self):
         super(Bitbucket, self).__init__(Bitbucket)
         self.groups = None
         self.repos = None
 
-    def reponame(self, project):
-        return project['full_name']
+    def reponame(self, repo):
+        return repo['full_name']
+
+    def is_private(self, repo):
+        return repo['is_private']
 
     def groupname(self, group):
         return group['username']
@@ -39,7 +44,8 @@ class Bitbucket(OAuth2Service):
             next_projects = self.get(next_projects['next']).json()
             projects['values'] += next_projects['values']
 
-        self.repos = dict([(self.reponame(p), p) for p in projects['values']])
+        self.repos = dict([(self.reponame(p), p) for p in projects['values']
+                           if Bitbucket.private or not self.is_private(p)])
         return self.repos
 
     def get_groups(self, force=False):
@@ -101,9 +107,18 @@ if __name__ == '__main__':
     bitbucket = Bitbucket()
 
     print('bitbucket groups:')
-    for k, v in sorted(bitbucket.get_groups().items()):
-        print(' -', k, v)
+    for k, _ in sorted(bitbucket.get_groups().items()):
+        print(' -', k)
 
-    print('bitbucket repos:')
-    for k, v in sorted(bitbucket.get_repos().items()):
-        print(' -', k, v)
+    repos = bitbucket.get_repos()
+    print('bitbucket public repos:')
+    for k, v in sorted(repos.items()):
+        if bitbucket.is_private(v):
+            continue
+        print(' -', k)
+
+    print('bitbucket private repos:')
+    for k, v in sorted(repos.items()):
+        if not bitbucket.is_private(v):
+            continue
+        print(' -', k)
