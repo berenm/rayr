@@ -107,9 +107,18 @@ if __name__ == '__main__':
     bitbucket = Bitbucket()
 
     print('bitbucket groups:')
-    for k, v in sorted(bitbucket.get_groups().items()):
-        print(' -', k, v)
+    for k, _ in sorted(bitbucket.get_groups().items()):
+        print(' -', k)
 
-    print('bitbucket repos:')
-    for k, v in sorted(bitbucket.get_repos().items()):
-        print(' -', k, v)
+    repos = bitbucket.get_repos()
+    print('bitbucket public repos:')
+    for k, v in sorted(repos.items()):
+        if bitbucket.is_private(v):
+            continue
+        print(' -', k)
+
+    print('bitbucket private repos:')
+    for k, v in sorted(repos.items()):
+        if not bitbucket.is_private(v):
+            continue
+        print(' -', k)

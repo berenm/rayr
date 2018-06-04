@@ -112,9 +112,18 @@ if __name__ == '__main__':
     gitlab = Gitlab()
 
     print('gitlab groups:')
-    for k, v in sorted(gitlab.get_groups().items()):
-        print(' -', k, v)
+    for k, _ in sorted(gitlab.get_groups().items()):
+        print(' -', k)
 
-    print('gitlab repos:')
-    for k, v in sorted(gitlab.get_repos().items()):
-        print(' -', k, v)
+    repos = gitlab.get_repos()
+    print('gitlab public repos:')
+    for k, v in sorted(repos.items()):
+        if gitlab.is_private(v):
+            continue
+        print(' -', k)
+
+    print('gitlab private repos:')
+    for k, v in sorted(repos.items()):
+        if not gitlab.is_private(v):
+            continue
+        print(' -', k)

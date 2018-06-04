@@ -75,6 +75,15 @@ if __name__ == '__main__':
     for k, _ in sorted(github.get_groups().items()):
         print(' -', k)
 
-    print('github repos:')
-    for k, _ in sorted(github.get_repos().items()):
+    repos = github.get_repos()
+    print('github public repos:')
+    for k, v in sorted(repos.items()):
+        if github.is_private(v):
+            continue
+        print(' -', k)
+
+    print('github private repos:')
+    for k, v in sorted(repos.items()):
+        if not github.is_private(v):
+            continue
         print(' -', k)
