@@ -6,6 +6,7 @@ from .config import config
 
 class Github(OAuth2Service):
     enabled = config['github']['enabled']
+    private = config['github']['private']
     client = config['github']['client']
     secret = config['github']['secret']
     autho_url = 'https://github.com/login/oauth/authorize'
@@ -21,6 +22,9 @@ class Github(OAuth2Service):
 
     def reponame(self, repo):
         return repo['full_name']
+
+    def is_private(self, repo):
+        return repo['private']
 
     def groupname(self, group):
         return group['login']
@@ -40,7 +44,8 @@ class Github(OAuth2Service):
             next_projects = self.get(service_url, params=params).json()
             projects += next_projects
 
-        self.repos = dict([(self.reponame(p), p) for p in projects])
+        self.repos = dict([(self.reponame(p), p) for p in projects
+                           if Github.private or not self.is_private(p)])
         return self.repos
 
     def get_groups(self, force=False):

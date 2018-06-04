@@ -6,6 +6,7 @@ from .config import config
 
 class Gitlab(OAuth2Service):
     enabled = config['gitlab']['enabled']
+    private = config['gitlab']['private']
     client = config['gitlab']['client']
     secret = config['gitlab']['secret']
     autho_url = 'https://gitlab.com/oauth/authorize'
@@ -21,6 +22,9 @@ class Gitlab(OAuth2Service):
 
     def reponame(self, repo):
         return repo['path_with_namespace']
+
+    def is_private(self, repo):
+        return not repo['public']
 
     def groupname(self, group):
         return group['path']
@@ -40,7 +44,8 @@ class Gitlab(OAuth2Service):
             next_projects = self.get(service_url, params=params).json()
             projects += next_projects
 
-        self.repos = dict([(self.reponame(p), p) for p in projects])
+        self.repos = dict([(self.reponame(p), p) for p in projects
+                           if Gitlab.private or not self.is_private(p)])
         return self.repos
 
     def get_groups(self, force=False):
