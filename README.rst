@@ -32,17 +32,20 @@ The configuration should have the following structure:
         "gitlab": {
             "client": "<client token>",
             "secret": "<secret token>",
-            "enabled": true
+            "enabled": true,
+            "private": false
         },
         "github": {
             "client": "<client token>",
             "secret": "<secret token>",
-            "enabled": true
+            "enabled": true,
+            "private": false
         },
         "bitbucket": {
             "client": "<client token>",
             "secret": "<secret token>",
-            "enabled": true
+            "enabled": true,
+            "private": false
         },
         "exclude": {
             "groups": ["group1"],
