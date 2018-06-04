@@ -14,7 +14,7 @@ class Github(OAuth2Service):
     token_url = 'https://github.com/login/oauth/access_token'
     api_url = 'https://api.github.com/{service}'
     token_file = '.github-auth'
-    scope = 'public_repo,read:org'
+    scope = 'read:org,repo'
 
     def __init__(self):
         super(Github, self).__init__(Github)
@@ -72,9 +72,9 @@ if __name__ == '__main__':
     github = Github()
 
     print('github groups:')
-    for k, v in sorted(github.get_groups().items()):
-        print(' -', k, v)
+    for k, _ in sorted(github.get_groups().items()):
+        print(' -', k)
 
     print('github repos:')
-    for k, v in sorted(github.get_repos().items()):
-        print(' -', k, v)
+    for k, _ in sorted(github.get_repos().items()):
+        print(' -', k)
