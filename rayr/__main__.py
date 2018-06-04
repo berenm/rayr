@@ -19,9 +19,13 @@ def sync_group(name, description, github, gitlab, bitbkt):
             gitlab.update_group(name, description=description)
 
 
-def sync_repo(name, repo, github, gitlab, bitbkt):
-    if repo['private']:
-        return
+def sync_repo(name, repo, github, gitlab, bitbkt, private=False):
+    if private and not Github.private:
+        github = None
+    if private and not Gitlab.private:
+        gitlab = None
+    if private and not Bitbucket.private:
+        bitbkt = None
 
     group = repo['owner']['login']
     github_repo = name
@@ -41,13 +45,13 @@ def sync_repo(name, repo, github, gitlab, bitbkt):
        gitlab_repo.lower() not in gitlab.get_repos() and
        group in gitlab.get_groups()):
         gitlab.create_repo(group, gitlab_repo,
-                           description=description, private=repo['private'])
+                           description=description, private=private)
 
     if (bitbkt is not None and
        bitbkt_repo.lower() not in bitbkt.get_repos() and
        group in bitbkt.get_groups()):
         bitbkt.create_repo(bitbkt_repo,
-                           description=description, private=repo['private'],
+                           description=description, private=private,
                            language=repo['language'] or '')
 
     if not os.path.exists(github_repo):
@@ -55,9 +59,12 @@ def sync_repo(name, repo, github, gitlab, bitbkt):
              .format(repo=github_repo), shell=True)
         call('git --git-dir={repo} remote rm origin'
              .format(repo=github_repo), shell=True)
-        call(('git --git-dir={repo} remote add --mirror=fetch '
-              'github git@github.com:{github}.git')
-             .format(repo=github_repo, github=github_repo), shell=True)
+
+        if github is not None:
+            call(('git --git-dir={repo} remote add --mirror=fetch '
+                  'github git@github.com:{github}.git')
+                 .format(repo=github_repo, github=github_repo),
+                 shell=True)
 
         if gitlab is not None:
             call(('git --git-dir={repo} remote add --mirror=push '
@@ -71,9 +78,11 @@ def sync_repo(name, repo, github, gitlab, bitbkt):
                  .format(repo=github_repo, bitbkt=bitbkt_repo.lower()),
                  shell=True)
 
-    call(('git --git-dir={repo} remote set-url '
-          'github git@github.com:{github}.git')
-         .format(repo=github_repo, github=github_repo), shell=True)
+    if github is not None:
+        call(('git --git-dir={repo} remote set-url '
+              'github git@github.com:{github}.git')
+             .format(repo=github_repo, github=github_repo),
+             shell=True)
 
     if gitlab is not None:
         call(('git --git-dir={repo} remote set-url '
@@ -87,8 +96,10 @@ def sync_repo(name, repo, github, gitlab, bitbkt):
              .format(repo=github_repo, bitbkt=bitbkt_repo.lower()),
              shell=True)
 
-    call('git --git-dir={repo} fetch github --prune'.format(repo=github_repo),
-         shell=True)
+    if github is not None:
+        call('git --git-dir={repo} fetch github --prune'
+             .format(repo=github_repo),
+             shell=True)
 
     if gitlab is not None:
         call('git --git-dir={repo} push gitlab --mirror'
@@ -123,4 +134,4 @@ if __name__ == '__main__':
             continue
 
         print('syncing repo github/{}...'.format(k), file=sys.stderr)
-        sync_repo(k, v, github, gitlab, bitbkt)
+        sync_repo(k, v, github, gitlab, bitbkt, github.is_private(v))
