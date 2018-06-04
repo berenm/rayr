@@ -19,36 +19,36 @@ def sync_group(name, description, github, gitlab, bitbkt):
             gitlab.update_group(name, description=description)
 
 
-def sync_repo(name, r, github, gitlab, bitbkt):
-    if r['private']:
+def sync_repo(name, repo, github, gitlab, bitbkt):
+    if repo['private']:
         return
 
-    group = r['owner']['login']
+    group = repo['owner']['login']
     github_repo = name
     gitlab_repo = name.replace('/.', '/dot-').replace('.', '-')
     bitbkt_repo = name
 
     description = []
-    if 'description' in r and r['description']:
-        description.append(r['description'])
-    if 'html_url' in r and r['html_url']:
-        description.append('Mirror of %s.' % r['html_url'])
-    if 'homepage' in r and r['homepage']:
-        description.append('%s' % r['homepage'])
+    if 'description' in repo and repo['description']:
+        description.append(repo['description'])
+    if 'html_url' in repo and repo['html_url']:
+        description.append('Mirror of %s.' % repo['html_url'])
+    if 'homepage' in repo and repo['homepage']:
+        description.append('%s' % repo['homepage'])
     description = ' '.join(description)
 
     if (gitlab is not None and
        gitlab_repo.lower() not in gitlab.get_repos() and
        group in gitlab.get_groups()):
         gitlab.create_repo(group, gitlab_repo,
-                           description=description, private=r['private'])
+                           description=description, private=repo['private'])
 
     if (bitbkt is not None and
        bitbkt_repo.lower() not in bitbkt.get_repos() and
        group in bitbkt.get_groups()):
         bitbkt.create_repo(bitbkt_repo,
-                           description=description, private=r['private'],
-                           language=r['language'] or '')
+                           description=description, private=repo['private'],
+                           language=repo['language'] or '')
 
     if not os.path.exists(github_repo):
         call('git clone --mirror git@github.com:{repo}.git {repo}'
