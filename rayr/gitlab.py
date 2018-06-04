@@ -76,6 +76,7 @@ class Gitlab(OAuth2Service):
 
         params = {
             'name': name.replace(group + '/', ''),
+            'path': name.replace(group + '/', ''),
             'namespace_id': groups[group]['id'],
             'description': kwargs.get('description', ''),
             'issues_enabled': str(False).lower(),
