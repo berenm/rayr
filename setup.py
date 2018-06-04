@@ -13,7 +13,7 @@ setup(
     long_description=readme(),
     url='http://github.com/berenm/rayr',
     author='Beren Minor',
-    author_email='beren.minor+github@example.com',
+    author_email='beren.minor+git@gmail.com',
     license='UNLICENSE',
     packages=['rayr'],
     entry_points={
