@@ -19,8 +19,8 @@ class Bitbucket(OAuth2Service):
         self.groups = None
         self.repos = None
 
-    def reponame(self, project):
-        return project['full_name']
+    def reponame(self, repo):
+        return repo['full_name']
 
     def groupname(self, group):
         return group['username']
