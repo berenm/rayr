@@ -20,7 +20,7 @@ class OAuth2Service(object):
         self.oauth = OAuth2Session(self.clazz.client,
                                    token=self.token,
                                    redirect_uri=self.clazz.redir_url,
-                                   scope=self.clazz.scope)
+                                   scope=','.join(sorted(self.clazz.scopes)))
         if self.token is None:
             self.auth()
 

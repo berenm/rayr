@@ -14,7 +14,7 @@ class Github(OAuth2Service):
     token_url = 'https://github.com/login/oauth/access_token'
     api_url = 'https://api.github.com/{service}'
     token_file = '.github-auth'
-    scope = 'read:org,repo'
+    scopes = ['read:org', 'repo']
 
     def __init__(self):
         super(Github, self).__init__(Github)

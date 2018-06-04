@@ -14,7 +14,7 @@ class Bitbucket(OAuth2Service):
     token_url = 'https://bitbucket.org/site/oauth2/access_token'
     api_url = 'https://api.bitbucket.org/2.0/{service}'
     token_file = '.bitbucket-auth'
-    scope = None
+    scopes = []
 
     def __init__(self):
         super(Bitbucket, self).__init__(Bitbucket)
