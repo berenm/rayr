@@ -7,7 +7,6 @@ from .config import config
 class Gitlab(OAuth2Service):
     client = config['gitlab']['client']
     secret = config['gitlab']['secret']
-    redir_url = 'http://127.0.0.1:8080'
     autho_url = 'https://gitlab.com/oauth/authorize'
     token_url = 'https://gitlab.com/oauth/token'
     api_url = 'https://gitlab.com/api/v4/{service}'

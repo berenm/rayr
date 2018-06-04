@@ -7,7 +7,6 @@ from .config import config
 class Github(OAuth2Service):
     client = config['github']['client']
     secret = config['github']['secret']
-    redir_url = 'http://127.0.0.1:8080'
     autho_url = 'https://github.com/login/oauth/authorize'
     token_url = 'https://github.com/login/oauth/access_token'
     api_url = 'https://api.github.com/{service}'
