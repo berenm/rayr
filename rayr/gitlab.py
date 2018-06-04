@@ -25,7 +25,7 @@ class Gitlab(OAuth2Service):
         return repo['path_with_namespace']
 
     def is_private(self, repo):
-        return not repo['public']
+        return not repo['visibility'] == 'public'
 
     def groupname(self, group):
         return group['path']
@@ -37,7 +37,7 @@ class Gitlab(OAuth2Service):
         print('listing gitlab repositories...', file=sys.stderr)
         service_url = Gitlab.api_url.format(service='projects')
 
-        params = {'membership': 'true', 'simple': 'true', 'page': 1}
+        params = {'membership': 'true', 'page': 1}
         projects = self.get(service_url, params=params).json()
         next_projects = projects
         while len(next_projects) > 0:
