@@ -17,21 +17,9 @@ class OAuth2Service(object):
         except Exception:
             self.token = None
 
-        class OAuth2ResponseHandler(BaseHTTPRequestHandler):
-            def do_GET(self):
-                global authorization_response
-                self.send_response(200)
-                self.send_header("Content-type", "text/html")
-                self.end_headers()
-                self.wfile.write('Authentication success'.encode('utf-8'))
-                self.server.response_url = 'https://localhost' + self.path
-
-        self.server = HTTPServer(('localhost', 0), OAuth2ResponseHandler)
-        redir_url = 'http://127.0.0.1:{}'.format(self.server.server_address[1])
-
         self.oauth = OAuth2Session(self.clazz.client,
                                    token=self.token,
-                                   redirect_uri=redir_url,
+                                   redirect_uri=self.clazz.redir_url,
                                    scope=self.clazz.scope)
         if self.token is None:
             self.auth()
@@ -46,10 +34,20 @@ class OAuth2Service(object):
                                                   access_type='offline')
         print('Please go to {} and authorize access.'.format(url))
 
-        self.server.handle_request()
-        self.server.server_close()
+        class OAuth2ResponseHandler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                global authorization_response
+                self.send_response(200)
+                self.send_header("Content-type", "text/html")
+                self.end_headers()
+                self.wfile.write('Authentication success'.encode('utf-8'))
+                self.server.response_url = 'https://localhost' + self.path
 
-        response_url = self.server.response_url
+        server = HTTPServer(('localhost', 8080), OAuth2ResponseHandler)
+        server.handle_request()
+        server.server_close()
+        response_url = server.response_url
+
         token = self.oauth.fetch_token(self.clazz.token_url,
                                        authorization_response=response_url,
                                        username=self.clazz.client,

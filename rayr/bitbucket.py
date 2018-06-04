@@ -9,6 +9,7 @@ class Bitbucket(OAuth2Service):
     private = config['bitbucket']['private']
     client = config['bitbucket']['client']
     secret = config['bitbucket']['secret']
+    redir_url = 'http://127.0.0.1:8080'
     autho_url = 'https://bitbucket.org/site/oauth2/authorize'
     token_url = 'https://bitbucket.org/site/oauth2/access_token'
     api_url = 'https://api.bitbucket.org/2.0/{service}'
