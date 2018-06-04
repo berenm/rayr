@@ -102,9 +102,9 @@ def sync_repo(name, repo, github, gitlab, bitbkt):
 
 
 if __name__ == '__main__':
-    github = Github() if config['github']['enabled'] else None
-    gitlab = Gitlab() if config['gitlab']['enabled'] else None
-    bitbkt = Bitbucket() if config['bitbucket']['enabled'] else None
+    github = Github() if Github.enabled else None
+    gitlab = Gitlab() if Gitlab.enabled else None
+    bitbkt = Bitbucket() if Bitbucket.enabled else None
 
     if github is None:
         exit(0)

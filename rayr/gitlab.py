@@ -5,6 +5,7 @@ from .config import config
 
 
 class Gitlab(OAuth2Service):
+    enabled = config['gitlab']['enabled']
     client = config['gitlab']['client']
     secret = config['gitlab']['secret']
     autho_url = 'https://gitlab.com/oauth/authorize'

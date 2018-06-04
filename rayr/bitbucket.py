@@ -5,6 +5,7 @@ from .config import config
 
 
 class Bitbucket(OAuth2Service):
+    enabled = config['bitbucket']['enabled']
     client = config['bitbucket']['client']
     secret = config['bitbucket']['secret']
     autho_url = 'https://bitbucket.org/site/oauth2/authorize'

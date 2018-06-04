@@ -5,6 +5,7 @@ from .config import config
 
 
 class Github(OAuth2Service):
+    enabled = config['github']['enabled']
     client = config['github']['client']
     secret = config['github']['secret']
     autho_url = 'https://github.com/login/oauth/authorize'
