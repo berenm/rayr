@@ -43,12 +43,14 @@ def sync_repo(name, repo, github, gitlab, bitbkt, private=False):
 
     if (gitlab is not None and
        gitlab_repo.lower() not in gitlab.get_repos() and
+       gitlab_repo not in gitlab.get_repos() and
        group in gitlab.get_groups()):
         gitlab.create_repo(group, gitlab_repo,
                            description=description, private=private)
 
     if (bitbkt is not None and
        bitbkt_repo.lower() not in bitbkt.get_repos() and
+       bitbkt_repo not in bitbkt.get_repos() and
        group in bitbkt.get_groups()):
         bitbkt.create_repo(bitbkt_repo,
                            description=description, private=private,
